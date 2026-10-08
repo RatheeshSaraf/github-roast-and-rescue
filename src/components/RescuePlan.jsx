@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { LifeBuoy, CheckSquare, Square, Clock, Sparkles, CheckCircle2 } from 'lucide-react';
+import { LifeBuoy, CheckSquare, Square, Clock, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-export default function RescuePlan({ rescuePlan }) {
+export default function RescuePlan({ rescuePlan = [] }) {
   // Local state for checking items off
   const [completedMap, setCompletedMap] = useState(() => {
     const initial = {};
@@ -19,11 +19,10 @@ export default function RescuePlan({ rescuePlan }) {
   const toggleTask = (taskId) => {
     setCompletedMap((prev) => {
       const next = { ...prev, [taskId]: !prev[taskId] };
-      // If newly checked, trigger small confetti pop!
       if (!prev[taskId]) {
         try {
           confetti({
-            particleCount: 40,
+            particleCount: 45,
             spread: 60,
             origin: { y: 0.8 },
           });
@@ -35,11 +34,10 @@ export default function RescuePlan({ rescuePlan }) {
     });
   };
 
-  // Calculate overall completed tasks
   const allTasks = rescuePlan.flatMap((g) => g.tasks);
   const doneCount = allTasks.filter((t) => completedMap[t.id]).length;
   const totalCount = allTasks.length;
-  const progressPercent = Math.round((doneCount / totalCount) * 100);
+  const progressPercent = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
 
   return (
     <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-6 sm:p-8 mb-8 shadow-xl">
@@ -52,20 +50,20 @@ export default function RescuePlan({ rescuePlan }) {
           </div>
           <h3 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2.5">
             <span className="text-emerald-400">🚑</span>
-            <span>THE RESCUE PLAN</span>
+            <span>ACTIONABLE RESCUE PLAN</span>
           </h3>
           <p className="text-sm text-zinc-400 mt-1">
-            Prioritized by return-on-time: fix critical flaws in minutes, not weeks
+            Prioritized by return-on-investment: structured into DO TODAY, DO THIS WEEK, and DO THIS MONTH
           </p>
         </div>
 
         {/* Progress Bar Header */}
-        <div className="self-start sm:self-auto bg-[#0d1117] border border-[#30363d] p-3 rounded-xl min-w-[200px]">
-          <div className="flex items-center justify-between text-xs mb-1 font-mono">
-            <span className="text-zinc-400">Rescue Progress:</span>
+        <div className="self-start sm:self-auto bg-[#0d1117] border border-[#30363d] p-3.5 rounded-xl min-w-[220px]">
+          <div className="flex items-center justify-between text-xs mb-1.5 font-mono">
+            <span className="text-zinc-400">Rescue Checklist:</span>
             <span className="font-bold text-emerald-400">{doneCount}/{totalCount} ({progressPercent}%)</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-[#21262d] overflow-hidden">
+          <div className="w-full h-2.5 rounded-full bg-[#21262d] overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-emerald-500 to-green-400 transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
@@ -74,72 +72,67 @@ export default function RescuePlan({ rescuePlan }) {
         </div>
       </div>
 
-      {/* Plan Priorities Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Plan Priorities Grid: DO TODAY / DO THIS WEEK / DO THIS MONTH */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {rescuePlan.map((group, gIdx) => (
           <div
-            key={group.priority}
-            className="p-5 rounded-2xl bg-[#0d1117] border border-[#30363d] flex flex-col justify-between hover:border-[#444c56] transition-colors"
+            key={gIdx}
+            className="rounded-2xl bg-[#0d1117] border border-[#30363d] p-5 flex flex-col justify-between hover:border-[#444c56] transition-colors"
           >
             <div>
-              {/* Group Header */}
+              {/* Card Group Header */}
               <div className="flex items-center justify-between gap-2 mb-3">
-                <span className={`text-xs font-black tracking-wider uppercase px-2.5 py-0.5 rounded-full border ${group.badgeColor}`}>
+                <span className={`px-2.5 py-0.5 rounded-lg border text-xs font-black uppercase tracking-wider font-mono ${group.badgeColor}`}>
                   {group.priority}
                 </span>
-                <span className="text-xs font-mono text-zinc-400 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-zinc-500" />
+                <span className="text-xs text-zinc-400 font-mono flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-zinc-500" />
                   {group.effort}
                 </span>
               </div>
 
-              <h4 className="text-base sm:text-lg font-bold text-white mb-4">
+              <h4 className="text-base font-black text-white mb-4 tracking-tight">
                 {group.title}
               </h4>
 
-              {/* Tasks */}
-              <div className="space-y-2.5">
+              {/* Task Items */}
+              <div className="space-y-3">
                 {group.tasks.map((task) => {
-                  const isChecked = !!completedMap[task.id];
+                  const isDone = !!completedMap[task.id];
                   return (
-                    <div
+                    <button
                       key={task.id}
+                      type="button"
                       onClick={() => toggleTask(task.id)}
-                      className={`p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 select-none ${
-                        isChecked
+                      className={`w-full p-3 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer text-xs ${
+                        isDone
                           ? 'bg-emerald-950/20 border-emerald-500/30 text-zinc-300'
-                          : 'bg-[#161b22] border-[#30363d] hover:border-zinc-500 text-white'
+                          : 'bg-[#161b22] border-[#30363d] text-zinc-200 hover:border-[#444c56]'
                       }`}
                     >
-                      <button
-                        type="button"
-                        className="mt-0.5 shrink-0 text-emerald-400 focus:outline-none"
-                      >
-                        {isChecked ? (
+                      <div className="mt-0.5 shrink-0">
+                        {isDone ? (
                           <CheckSquare className="w-4 h-4 text-emerald-400" />
                         ) : (
-                          <Square className="w-4 h-4 text-zinc-500" />
-                        )}
-                      </button>
-                      <div className="text-xs sm:text-sm leading-relaxed">
-                        <span className={isChecked ? 'line-through text-zinc-400' : ''}>
-                          {task.text}
-                        </span>
-                        {task.done && !isChecked && (
-                          <span className="ml-2 text-[10px] text-emerald-400 font-mono">
-                            (Detected on profile)
-                          </span>
+                          <Square className="w-4 h-4 text-zinc-500 hover:text-zinc-400" />
                         )}
                       </div>
-                    </div>
+                      <span className={`leading-relaxed ${isDone ? 'line-through text-zinc-500' : ''}`}>
+                        {task.text}
+                      </span>
+                    </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#21262d] flex items-center justify-between text-[11px] text-zinc-500 font-mono">
-              <span>Stage {gIdx + 1} of 4</span>
-              <span>Click checkbox to mark solved</span>
+            <div className="mt-4 pt-3 border-t border-[#21262d] text-[11px] text-zinc-500 font-mono flex items-center justify-between">
+              <span>{group.tasks.filter((t) => completedMap[t.id]).length} of {group.tasks.length} done</span>
+              {group.tasks.every((t) => completedMap[t.id]) && (
+                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> Completed
+                </span>
+              )}
             </div>
           </div>
         ))}

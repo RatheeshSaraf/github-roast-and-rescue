@@ -1,20 +1,30 @@
 import React from 'react';
 import { 
-  Users, 
-  BookMarked, 
   MapPin, 
   Building, 
   Link as LinkIcon, 
   Calendar, 
   ExternalLink,
-  Flame,
   Award,
   Sparkles,
-  GitFork
+  Briefcase
 } from 'lucide-react';
 
 export default function ProfileCard({ analysis, onGenerateReadme, onShareCard }) {
-  const { user, totalRepos, languages, totalStars, nonForkReposCount, forkedReposCount, grade, gradeColor, totalScore } = analysis;
+  const { 
+    user, 
+    totalRepos, 
+    languages, 
+    totalStars, 
+    nonForkReposCount, 
+    forkedReposCount, 
+    grade, 
+    gradeColor, 
+    totalScore,
+    recruiterReadinessScore,
+    recruiterGrade,
+    recruiterGradeColor
+  } = analysis;
 
   const joinedDate = new Date(user.created_at).toLocaleDateString('en-US', {
     month: 'short',
@@ -41,6 +51,12 @@ export default function ProfileCard({ analysis, onGenerateReadme, onShareCard })
           </div>
 
           <div>
+            {/* Feature 10: ROAST TARGET badge */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/40 text-orange-400 text-xs font-mono font-bold tracking-wider uppercase mb-1.5 shadow-sm">
+              <span className="text-orange-500">🔥</span>
+              <span>ROAST TARGET</span>
+            </div>
+
             <div className="flex flex-wrap items-center gap-3">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
                 {user.name || user.login}
@@ -121,7 +137,7 @@ export default function ProfileCard({ analysis, onGenerateReadme, onShareCard })
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 mt-6 pt-6 border-t border-[#30363d]/80">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6 pt-6 border-t border-[#30363d]/80">
         <div className="p-3 rounded-xl bg-[#0d1117] border border-[#30363d]/60">
           <p className="text-xs text-zinc-400 font-medium">Public Repos</p>
           <p className="text-xl font-bold text-white mt-0.5">{totalRepos}</p>
@@ -156,14 +172,36 @@ export default function ProfileCard({ analysis, onGenerateReadme, onShareCard })
           </p>
         </div>
 
-        <div className="col-span-2 sm:col-span-4 lg:col-span-1 p-3 rounded-xl bg-gradient-to-r from-orange-950/40 to-red-950/40 border border-orange-500/30 flex items-center justify-between lg:flex-col lg:items-start lg:justify-center">
-          <div>
-            <p className="text-xs text-orange-300 font-semibold">Audit Score</p>
-            <p className="text-2xl font-black text-white mt-0.5">{totalScore}<span className="text-sm font-normal text-zinc-400">/100</span></p>
+        <div className="p-3 rounded-xl bg-[#0d1117] border border-[#30363d]/60">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-zinc-400 font-medium">Signal Score</p>
+            <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border font-mono ${gradeColor}`}>
+              {grade}
+            </span>
           </div>
-          <span className={`px-2.5 py-1 rounded-lg border text-xs font-black uppercase tracking-wider ${gradeColor}`}>
-            Grade {grade}
-          </span>
+          <p className="text-xl font-bold text-white mt-0.5 font-mono">
+            {totalScore}<span className="text-xs text-zinc-500 font-normal">/100</span>
+          </p>
+          <p className="text-[11px] text-zinc-500 mt-0.5 font-mono">
+            Public signals
+          </p>
+        </div>
+
+        <div className="p-3 rounded-xl bg-gradient-to-r from-orange-950/40 to-amber-950/40 border border-orange-500/40 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-orange-300 font-semibold flex items-center gap-1">
+              <Briefcase className="w-3 h-3 text-orange-400" /> Readiness
+            </p>
+            <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border font-mono ${recruiterGradeColor}`}>
+              {recruiterGrade}
+            </span>
+          </div>
+          <p className="text-2xl font-black text-white mt-0.5 font-mono">
+            {recruiterReadinessScore}<span className="text-xs text-zinc-400 font-normal">/100</span>
+          </p>
+          <p className="text-[10px] text-orange-300/80 font-mono">
+            Recruiter readiness
+          </p>
         </div>
       </div>
     </div>

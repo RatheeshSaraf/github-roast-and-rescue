@@ -1,8 +1,8 @@
 import React from 'react';
-import { Flame, ShieldCheck, Key, Sparkles } from 'lucide-react';
+import { Flame, Key, Sparkles } from 'lucide-react';
 import GithubIcon from './GithubIcon';
 
-export default function Navbar({ onOpenSettings, rateLimitRemaining, onReset }) {
+export default function Navbar({ onOpenSettings, rateLimitRemaining, onReset, onTryDemo }) {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0d1117]/85 border-b border-[#30363d]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -31,10 +31,22 @@ export default function Navbar({ onOpenSettings, rateLimitRemaining, onReset }) 
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Quick Demo Button for Judges */}
+          {onTryDemo && (
+            <button
+              onClick={onTryDemo}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-xs font-bold text-amber-300 transition-colors cursor-pointer"
+              title="Instant 1-Click Judge Demo Profile"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Demo Profile</span>
+            </button>
+          )}
+
           {/* Rate limit status pill */}
           {rateLimitRemaining !== null && (
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161b22] border border-[#30363d] text-xs font-mono text-zinc-300">
+            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161b22] border border-[#30363d] text-xs font-mono text-zinc-300">
               <span className={`w-2 h-2 rounded-full ${rateLimitRemaining < 10 ? 'bg-red-400 animate-ping' : 'bg-emerald-400'}`}></span>
               <span>API: {rateLimitRemaining}/60 left</span>
             </div>

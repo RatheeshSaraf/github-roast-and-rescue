@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Key, ShieldCheck, Check, Info, Trash2 } from 'lucide-react';
+import { X, Key, Check, Info, Trash2 } from 'lucide-react';
 
 export default function SettingsModal({ token, onSaveToken, rateLimitRemaining, rateLimitReset, onClose }) {
   const [inputVal, setInputVal] = useState(token || '');

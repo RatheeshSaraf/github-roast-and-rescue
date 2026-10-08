@@ -1,41 +1,60 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Sparkles, FileText, Download } from 'lucide-react';
+import { X, Copy, Check, Sparkles, Download } from 'lucide-react';
 
 export default function ReadmeModal({ repo, user, onClose }) {
   const [copied, setCopied] = useState(false);
 
-  const repoName = repo ? repo.name : 'my-awesome-project';
-  const repoDesc = repo && repo.description ? repo.description : 'A high-performance modern web application built for seamless developer productivity.';
+  const repoName = repo ? repo.name : 'showcase-project';
+  const repoDesc = repo && repo.description ? repo.description : 'A modern full-stack web application built for scalable developer productivity.';
   const language = repo && repo.language ? repo.language : 'TypeScript';
-  const username = user ? user.login : 'your-username';
+  const username = user ? user.login : 'developer';
+  const liveUrl = repo && repo.homepage ? repo.homepage : 'https://your-demo-url.vercel.app';
 
   const generatedReadme = `# ${repoName}
 
 > ${repoDesc}
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live_Deployment-success?style=for-the-badge&logo=vercel)](${repo && repo.homepage ? repo.homepage : 'https://your-demo-url.com'})
-[![GitHub license](https://img.shields.io/github/license/${username}/${repoName}?style=for-the-badge)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/${username}/${repoName}?style=for-the-badge)](https://github.com/${username}/${repoName}/stargazers)
+[![Live Demo](https://img.shields.io/badge/Demo-Live_Deployment-success?style=for-the-badge&logo=vercel)](${liveUrl})
+[![Tech Stack](https://img.shields.io/badge/Language-${encodeURIComponent(language)}-blue?style=for-the-badge)](https://github.com/${username}/${repoName})
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 ---
 
-## 🌟 Key Highlights
+## 🎯 The Problem
+Brief 1–2 sentences explaining why this application exists and what pain point it solves:
+- Modern teams struggle with fragmented workflows and slow feedback loops.
+- This platform centralizes project operations into a responsive, real-time interface.
 
-- **⚡ Fast & Modern**: Built with ${language} for high reliability and type safety.
-- **🎨 Responsive Interface**: Tailored UX optimized for desktop, tablet, and mobile devices.
-- **🚀 Production-Ready**: Designed with scalable architectures and zero-config deployment.
+---
+
+## ✨ Features
+- **⚡ High Performance**: Fast client rendering with zero layout shift.
+- **🔐 Secure Architecture**: Authentication and validation on all entry points.
+- **📱 Fully Responsive**: Tailored user experience for mobile, tablet, and desktop viewports.
+- **📊 Real-Time Feedback**: Immediate visual telemetry and state synchronization.
 
 ---
 
 ## 🛠 Tech Stack
-
-- **Frontend**: React 19, ${language}, Tailwind CSS
-- **Tools**: Vite, ESLint, Git, GitHub Actions
+- **Frontend / UI**: React 19, ${language}, Tailwind CSS
+- **Backend / Services**: Node.js, REST API, Express
+- **Build & Quality**: Vite, ESLint, TypeScript
 - **Deployment**: Vercel / Netlify
 
 ---
 
-## 🚀 Quick Start
+## 📸 Screenshots
+<!-- Add your project screenshots or GIFs below -->
+\`\`\`
++-------------------------------------------------------+
+|                 [ Application Screenshot ]            |
+|       (Replace with: ![Dashboard Demo](screenshot.png) |
++-------------------------------------------------------+
+\`\`\`
+
+---
+
+## 🚀 Installation & Setup
 
 ### 1. Clone the repository
 \`\`\`bash
@@ -48,29 +67,43 @@ cd ${repoName}
 npm install
 \`\`\`
 
-### 3. Start local development server
+### 3. Configure environment
+\`\`\`bash
+cp .env.example .env
+\`\`\`
+
+### 4. Run local development server
 \`\`\`bash
 npm run dev
 \`\`\`
-
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
----
-
-## 📐 Architecture & Design Decisions
-
-Explain why you chose ${language} and how you structured the codebase:
-- **Modular Services**: Separation of API networking from presentation logic.
-- **Error Handling**: Graceful fallback UI for rate-limits, network timeouts, and 404s.
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 🤝 Author & Contact
+## 💡 Usage Example
+\`\`\`bash
+# Build for production
+npm run build
 
-Crafted with dedication by **${user && user.name ? user.name : username}**  
+# Preview production build locally
+npm run preview
+\`\`\`
+
+---
+
+## 🔮 Future Improvements & Roadmap
+- [ ] Add end-to-end automated testing suite with Playwright
+- [ ] Implement dark/light theme persistence
+- [ ] Add role-based access control (RBAC) dashboard
+
+---
+
+## 👤 Author & Contact
+Crafted with passion by **${user && user.name ? user.name : username}**
 - GitHub: [@${username}](https://github.com/${username})
-${user && user.blog ? `- Portfolio: [${user.blog}](${user.blog})` : ''}
-${user && user.twitter_username ? `- Twitter / X: [@${user.twitter_username}](https://twitter.com/${user.twitter_username})` : ''}
+${user && user.blog ? `- Portfolio: [${user.blog}](${user.blog})\n` : ''}
+---
+*Audit-ready template generated by GitHub Roast & Rescue*
 `;
 
   const handleCopy = () => {
@@ -80,75 +113,71 @@ ${user && user.twitter_username ? `- Twitter / X: [@${user.twitter_username}](ht
   };
 
   const handleDownload = () => {
-    const blob = new Blob([generatedReadme], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `README-${repoName}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const element = document.createElement('a');
+    const file = new Blob([generatedReadme], { type: 'text/markdown' });
+    element.href = URL.createObjectURL(file);
+    element.download = 'README.md';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#161b22] border border-[#30363d] rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div className="bg-[#161b22] border border-[#30363d] rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="p-5 border-b border-[#30363d] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-orange-400" />
-            </div>
+            <Sparkles className="w-5 h-5 text-orange-400" />
             <div>
-              <h3 className="text-base sm:text-lg font-bold text-white">
-                Gold-Standard README Generator
+              <h3 className="font-bold text-base text-white">
+                Recruiter-Ready README Generator: <span className="font-mono text-orange-400">{repoName}</span>
               </h3>
-              <p className="text-xs text-zinc-400 font-mono">
-                Customized for {repoName}
+              <p className="text-xs text-zinc-400">
+                Gold-standard structured template: Problem, Features, Tech Stack, Setup & Roadmap
               </p>
             </div>
           </div>
-
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-[#21262d] transition-colors cursor-pointer"
+            className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-[#21262d] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Code body */}
-        <div className="p-5 overflow-y-auto flex-1 bg-[#0d1117] font-mono text-xs text-zinc-300">
-          <pre className="whitespace-pre-wrap selection:bg-orange-500/30 selection:text-orange-200">
-            {generatedReadme}
-          </pre>
+        {/* Markdown Output Area */}
+        <div className="flex-1 p-5 overflow-y-auto bg-[#0d1117] font-mono text-xs text-zinc-300 leading-relaxed selection:bg-orange-500/30">
+          <pre className="whitespace-pre-wrap">{generatedReadme}</pre>
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-[#30363d] bg-[#161b22] flex items-center justify-between">
-          <span className="text-xs text-zinc-400 font-mono">
-            Drop this file in your root folder as <code className="text-orange-400">README.md</code>
-          </span>
+        <div className="p-4 bg-[#161b22] border-t border-[#30363d] flex flex-wrap items-center justify-between gap-3">
+          <div className="text-xs text-zinc-400">
+            Copy into your project's <code className="text-orange-400">README.md</code> and commit to GitHub.
+          </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleDownload}
-              className="px-3 py-2 rounded-xl bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-xs font-semibold text-zinc-200 flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#21262d] hover:bg-[#30363d] text-xs font-semibold text-zinc-200 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer border border-[#30363d]"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download .md</span>
+              <Download className="w-4 h-4 text-zinc-400" />
+              <span>Download README.md</span>
             </button>
+
             <button
               onClick={handleCopy}
-              className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-xs font-bold text-white flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
+              className="px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-xs font-bold text-white flex items-center gap-1.5 transition-colors cursor-pointer shadow-lg shadow-orange-500/20"
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-white" />
-                  <span>Copied!</span>
+                  <Check className="w-4 h-4" />
+                  <span>Copied to Clipboard!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5" />
+                  <Copy className="w-4 h-4" />
                   <span>Copy Markdown</span>
                 </>
               )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Heart, Sparkles, ExternalLink } from 'lucide-react';
+import { Flame, Sparkles } from 'lucide-react';
 import GithubIcon from './GithubIcon';
 
 export default function Footer() {

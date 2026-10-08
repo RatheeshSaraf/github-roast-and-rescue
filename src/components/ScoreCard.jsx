@@ -1,5 +1,5 @@
 import React from 'react';
-import { Gauge, Info, ShieldAlert, CheckCircle, TrendingUp, HelpCircle } from 'lucide-react';
+import { Info, TrendingUp } from 'lucide-react';
 
 export default function ScoreCard({ analysis }) {
   const { totalScore, grade, gradeColor, scoreCategories } = analysis;

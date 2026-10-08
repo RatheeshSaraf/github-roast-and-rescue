@@ -2,6 +2,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { handleGithubProxy } from './apiProxy.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,8 +19,23 @@ const mimeTypes = {
   '.json': 'application/json',
 };
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const urlPath = req.url.split('?')[0];
+
+  // 1. Intercept Server-side GitHub API Proxy routes
+  if (urlPath.startsWith('/api/github')) {
+    await handleGithubProxy(req, res);
+    return;
+  }
+
+  // 2. Health check route
+  if (urlPath === '/healthz' || urlPath === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', service: 'github-roast-and-rescue' }));
+    return;
+  }
+
+  // 3. Serve static assets & SPA fallback
   let filePath = path.join(distDir, urlPath === '/' ? 'index.html' : urlPath);
 
   if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
@@ -47,4 +63,9 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Cloud Run container active on port ${PORT}`);
+  if (process.env.GITHUB_TOKEN) {
+    console.log('GitHub API Proxy initialized with authenticated GITHUB_TOKEN (5,000 req/hr)');
+  } else {
+    console.log('GitHub API Proxy running in unauthenticated mode (set GITHUB_TOKEN env var for 5k req/hr)');
+  }
 });
