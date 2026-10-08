@@ -1,0 +1,9 @@
+/* App specific animations and styling */
+@keyframes glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.glow-effect {
+  animation: glow 3s ease-in-out infinite;
+}
